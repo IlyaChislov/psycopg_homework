@@ -1,0 +1,31 @@
+def create_table(conn):
+    with conn.cursor() as cur:
+        cur.execute("""
+                    CREATE TABLE IF NOT EXISTS clients(
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(60) NOT NULL,
+                        surname VARCHAR(60) NOT NULL,
+                        email VARCHAR(60) NOT NULL,
+                        telephone VARCHAR(60) NOT NULL);
+                    """)
+        conn.commit()
+    print('Таблица успешно создана')
+
+import psycopg2
+def insert_client(conn):
+    print("Введите имя клиента")
+    name = str(input())
+    print("Введите фамилию клиента")
+    surname = str(input())
+    print("Введите эмэйл клиента")
+    email = str(input())
+    print("Введите телефон клиента")
+    telephone = str(input())
+    postgres_insert_query = """ INSERT INTO clients(name, surname, email, telephone)
+                                           VALUES (%s,%s,%s)"""
+    record_to_insert = (name, surname, email, telephone)
+    with conn.cursor() as cur:
+        cur.execute(postgres_insert_query, record_to_insert)
+        conn.commit()
+        count = cursor.rowcount
+        print(count, "Запись успешно добавлена в таблицу")
