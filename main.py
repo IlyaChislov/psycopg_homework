@@ -1,39 +1,48 @@
 import psycopg2
 
 import functions
+import create_tables
 
-try:
-    conn = psycopg2.connect(database='clients', user='postgres', password='postgres')
-    functions.create_table(conn)
-    while 1 < 2:
-        print("""Выберите номер нужного запроса:\n 1.Функция, позволяющая добавить нового клиента;\n 
-              2. Функция, позволяющая добавить телефон для существующего клиента;\n
-              3. Функция, позволяющая изменить данные о клиенте;\n
-              4. Функция, позволяющая удалить телефон для существующего клиента;\n
-              5. Функция, позволяющая удалить существующего клиента;\n
-              6. Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону.\n
-              7. Показать все данные.\n
-              8. Выйти из программы""")
-        num = int(input())
-        if num == 1:
-            functions.insert_client(conn)
-        elif num == 2:
-            functions.add_telephone(conn)
-        elif num == 3:
-            functions.update_record(conn)
-        elif num == 4:
-            functions.delete_telephone(conn)
-        elif num == 5:
-            functions.delete_clients(conn)
-        elif num == 6:
-            functions.search_client(conn)
-        elif num == 7:
-            functions.select_data(conn)
-        elif num == 8:
-            break
-except (Exception, Error) as error:
-    print("Ошибка при работе с PostgreSQL", error)
-finally:
-    if conn:
-        conn.close()
-        print("Соединение с PostgreSQL закрыто")
+def get_connection():
+    try:
+        conn = psycopg2.connect(database='clients', user='postgres', password='postgres')
+        return conn
+    except (Exception, Error) as error:
+        print("Ошибка при работе с PostgreSQL", error)
+
+conn = get_connection()
+#Создаем таблицы
+create_tables.create_t(conn)
+# Вывод имеющихся данных
+functions.select_data(conn)
+# Заполняем таблицы
+# Добавим в таблицу clients следующих клиентов
+# data_clients = [['Михаил', 'Бычков', 'buchka@mail.ru'], ['Руслан', 'Беликов', 'belgram@yandex.ru'], ['Илья', 'Числов', 'il.spartak@yandex'], ['Илья', 'Лебедев', 'lebebed@yandex.ru'], ['Фёдор', 'Пономарёв', 'poker@yandex.ru']]
+# functions.insert_client(conn, data_clients)
+# Добавляем телефоны
+# functions.add_telephone(conn,'89536162332', 1)
+# functions.add_telephone(conn, '89532214251', 2)
+# functions.add_telephone(conn, '89606504113', 2)
+# functions.add_telephone(conn, '89092290446', 3)
+# functions.add_telephone(conn,  '89606442571', 4)
+# functions.add_telephone(conn,  '89192345423', 4)
+# functions.add_telephone(conn, '82321234324', 5)
+# functions.add_telephone(conn, '82321239999', 6)
+# functions.add_telephone(conn, '82321236666', 6)
+# functions.add_telephone(conn, '82321235555', 6)
+# Удалим из таблицы clients клиентов со следующими id:
+# client_id=[5]
+# functions.delete_clients(conn, client_id)
+# functions.select_data(conn)
+# Удалим номер телефона - можно удалять как конкретный номер, так и все номера клиента:
+# functions.delete_telephone(conn, '82321239999')
+# functions.delete_telephone(conn, '82321236666', 6)
+# functions.delete_telephone(conn, client_id=6)
+# functions.select_data(conn)
+# Поиск клиентов по разным параметрам
+# functions.search_client(conn, 'Руслан')
+# functions.search_client(conn, 'Михаил', 'Бычков', 'buchka@mail.ru')
+# functions.search_client(conn, 'Илья', 'Числов', 'il.spartak@yandex', '89092290446')
+# Изменение данных о клиенте
+functions.update_record(conn, '1', 'Михаил', 'Бычковвв','bychkov@gmail.com', '89521237856','8888')
+functions.select_data(conn)
